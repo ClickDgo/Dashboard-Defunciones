@@ -1,0 +1,3515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Diseño de Experimentos - Estadísticas Descriptivas</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+<style>
+
+/* =========================================================
+   BASE
+========================================================= */
+
+:root{
+    --navy:#17365d;
+    --navy2:#234f7d;
+    --pink:#d81b60;
+    --green:#188038;
+    --red:#c5221f;
+    --gold:#b06000;
+    --text:#202124;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+    --soft:#f7f9fc;
+    --white:#ffffff;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    background:white;
+    color:var(--text);
+    font-family:"Google Sans",Arial,sans-serif;
+}
+
+.container{
+    width:min(1480px,94%);
+    margin:auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.hero{
+    padding:48px 20px 34px;
+    border-bottom:1px solid var(--line);
+    text-align:center;
+}
+
+.hero h1{
+    margin:0;
+    font-size:40px;
+    line-height:1.15;
+    font-weight:700;
+    letter-spacing:-1px;
+}
+
+.hero h2{
+    margin:12px 0 0;
+    font-size:23px;
+    color:var(--navy);
+    font-weight:600;
+}
+
+.hero h3{
+    margin:8px 0 0;
+    font-size:18px;
+    font-weight:500;
+}
+
+.hero .students{
+    max-width:950px;
+    margin:10px auto 0;
+    color:var(--muted);
+    line-height:1.5;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.navigation{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    padding:14px 0;
+}
+
+.navigation select{
+    display:block;
+    width:min(850px,100%);
+    margin:auto;
+    border:1px solid #d6d9de;
+    border-radius:12px;
+    background:white;
+    padding:14px 17px;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--text);
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.page{
+    display:none;
+    padding:42px 0 70px;
+}
+
+.page.active{
+    display:block;
+}
+
+.section-head{
+    margin-bottom:28px;
+}
+
+.section-head .eyebrow{
+    text-transform:uppercase;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    color:var(--navy2);
+    margin-bottom:7px;
+}
+
+.section-head h2{
+    margin:0;
+    font-size:32px;
+    letter-spacing:-.5px;
+}
+
+.section-head p{
+    max-width:1050px;
+    margin:10px 0 0;
+    color:var(--muted);
+    line-height:1.65;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.metrics{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:15px;
+    margin:25px 0;
+}
+
+.metric{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+    background:white;
+}
+
+.metric-label{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.metric-value{
+    font-size:29px;
+    font-weight:700;
+    color:var(--navy);
+}
+
+.metric-note{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.panel{
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:white;
+    margin:22px 0;
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:20px 23px 7px;
+}
+
+.panel-header h3{
+    margin:0;
+    font-size:20px;
+}
+
+.panel-header p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+}
+
+.panel-body{
+    padding:10px 18px 20px;
+}
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+@media(max-width:900px){
+    .grid2{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:30px;
+    }
+}
+
+/* =========================================================
+   PLOTS
+========================================================= */
+
+.plot{
+    width:100%;
+    min-height:430px;
+}
+
+.plot-large{
+    min-height:650px;
+}
+
+.plot-xl{
+    min-height:900px;
+}
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.intro-box{
+    background:var(--soft);
+    border-left:5px solid var(--navy);
+    border-radius:12px;
+    padding:24px 26px;
+    line-height:1.7;
+    margin-bottom:25px;
+}
+
+.intro-box h3{
+    margin:0 0 10px;
+    color:var(--navy);
+}
+
+/* =========================================================
+   CHI SUMMARY
+========================================================= */
+
+.chi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:17px;
+    margin:25px 0;
+}
+
+.chi-card{
+    border:1px solid var(--line);
+    border-radius:17px;
+    padding:21px;
+    background:white;
+}
+
+.chi-card .variable{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:8px;
+}
+
+.chi-card .v{
+    font-size:34px;
+    font-weight:700;
+    color:var(--navy);
+}
+
+.chi-card .description{
+    font-size:13px;
+    margin-top:6px;
+    color:var(--muted);
+}
+
+.chi-card .status{
+    display:inline-block;
+    margin-top:12px;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+    background:#edf3fa;
+    color:var(--navy);
+}
+
+.chi-card.strong .status{
+    background:#e8f5ed;
+    color:var(--green);
+}
+
+.chi-card.weak .status{
+    background:#fff5df;
+    color:var(--gold);
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.table-scroll{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+
+th{
+    background:#f6f8fb;
+    font-weight:600;
+    color:#374151;
+}
+
+th,td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+}
+
+th.num,
+td.num{
+    text-align:right;
+}
+
+tr:hover td{
+    background:#fafafa;
+}
+
+.significant{
+    color:var(--green);
+    font-weight:700;
+}
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+.note{
+    padding:17px 20px;
+    border-radius:11px;
+    background:#fafafa;
+    border:1px solid var(--line);
+    line-height:1.6;
+    color:#4b5563;
+    margin-top:17px;
+}
+
+.note.warning{
+    border-left:5px solid #d99000;
+}
+
+.note.info{
+    border-left:5px solid var(--navy);
+}
+
+/* =========================================================
+   CAUSE HEADER
+========================================================= */
+
+.cause-banner{
+    border-radius:18px;
+    padding:24px 27px;
+    background:linear-gradient(120deg,#f6f8fc,#ffffff);
+    border:1px solid var(--line);
+    margin-bottom:25px;
+}
+
+.cause-banner h2{
+    margin:0;
+    color:var(--navy);
+}
+
+.cause-banner p{
+    margin:8px 0 0;
+    color:var(--muted);
+    line-height:1.6;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+    border-top:1px solid var(--line);
+    text-align:center;
+    padding:30px 15px;
+    color:var(--muted);
+    font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<header class="hero">
+
+<div class="container">
+
+<h1>Diseño de Experimentos - Estadísticas Descriptivas</h1>
+
+<h2>Facultad de Ciencias Exactas - UJED</h2>
+
+<h3>Maestro Jesús Carreón Rodríguez</h3>
+
+<div class="students">
+Alumnos: Diana González Vázquez, Ángeles Sarahí Vargas Gutiérrez,
+Jesús Emmanuel Vázquez Macías.
+</div>
+
+</div>
+
+</header>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<nav class="navigation">
+
+<div class="container">
+
+<select id="menu" onchange="cambiarPagina(this.value)">
+
+<option value="general">
+Estadística General
+</option>
+
+<option value="agresion">
+Agresión con disparo de arma de fuego
+</option>
+
+<option value="diabetes">
+Diabetes Mellitus Tipo 2
+</option>
+
+<option value="neumonia">
+Neumonía, no especificada
+</option>
+
+<option value="chi">
+Análisis de Ji Cuadrada
+</option>
+
+</select>
+
+</div>
+
+</nav>
+
+
+<!-- =========================================================
+     GENERAL
+========================================================= -->
+
+<section id="general" class="page active">
+
+<div class="container">
+
+<div class="section-head">
+
+<div class="eyebrow">Descripción de la muestra</div>
+
+<h2>Estadística General</h2>
+
+<p>
+Panorama descriptivo de las 75,603 defunciones incluidas en el análisis.
+Se presentan las distribuciones de las principales variables categóricas
+y la distribución de edad.
+</p>
+
+</div>
+
+
+<div class="metrics">
+
+<div class="metric">
+<div class="metric-label">Registros</div>
+<div class="metric-value">75,603</div>
+<div class="metric-note">Defunciones analizadas</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Diabetes</div>
+<div class="metric-value">47.41%</div>
+<div class="metric-note">35,843 registros</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Neumonía</div>
+<div class="metric-value">37.08%</div>
+<div class="metric-note">28,030 registros</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Agresión</div>
+<div class="metric-value">15.52%</div>
+<div class="metric-note">11,730 registros</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Edad media</div>
+<div class="metric-value">65.52</div>
+<div class="metric-note">años</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Edad mediana</div>
+<div class="metric-value">70</div>
+<div class="metric-note">años</div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Distribución por causa</h3>
+<p>Total y porcentaje de las tres causas estudiadas.</p>
+</div>
+
+<div class="panel-body">
+<div id="generalCausas" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="grid2">
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Sexo</h3>
+<p>Distribución general de hombres y mujeres.</p>
+</div>
+
+<div class="panel-body">
+<div id="generalSexo" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Condición indígena</h3>
+</div>
+
+<div class="panel-body">
+<div id="generalIndigena" class="plot"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Escolaridad</h3>
+</div>
+
+<div class="panel-body">
+<div id="generalEscolaridad" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación</h3>
+</div>
+
+<div class="panel-body">
+<div id="generalOcupacion" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación ampliada</h3>
+<p>
+Las categorías se muestran individualmente, ordenadas de mayor a menor.
+</p>
+</div>
+
+<div class="panel-body">
+<div id="generalOcupacionAmp" class="plot-xl"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estado civil</h3>
+</div>
+
+<div class="panel-body">
+<div id="generalEstado" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Distribución de edad</h3>
+<p>
+La distribución completa se presenta por edad exacta.
+</p>
+</div>
+
+<div class="panel-body">
+<div id="generalEdad" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Resumen estadístico de edad</h3>
+</div>
+
+<div class="panel-body">
+
+<div class="table-scroll">
+
+<table>
+
+<tr><th>Estadístico</th><th class="num">Valor</th></tr>
+<tr><td>N</td><td class="num">75,603</td></tr>
+<tr><td>Media</td><td class="num">65.5240</td></tr>
+<tr><td>Desviación estándar</td><td class="num">21.3586</td></tr>
+<tr><td>Mínimo</td><td class="num">0</td></tr>
+<tr><td>Q1</td><td class="num">53</td></tr>
+<tr><td>Mediana</td><td class="num">70</td></tr>
+<tr><td>Q3</td><td class="num">82</td></tr>
+<tr><td>Máximo</td><td class="num">118</td></tr>
+<tr><td>Rango</td><td class="num">118</td></tr>
+<tr><td>IQR</td><td class="num">29</td></tr>
+<tr><td>Asimetría</td><td class="num">-0.8122</td></tr>
+<tr><td>Curtosis</td><td class="num">0.0384</td></tr>
+<tr><td>D’Agostino-Pearson</td><td class="num">6476.0172</td></tr>
+<tr><td>p de normalidad</td><td class="num">&lt; 0.001</td></tr>
+
+</table>
+
+</div>
+
+
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     AGRESION
+========================================================= -->
+
+<section id="agresion" class="page">
+
+<div class="container">
+
+<div class="cause-banner">
+
+<h2>Agresión con disparo de otras armas de fuego</h2>
+
+<p>
+Agresion Con Disparo De Otras Armas De Fuego, Y Las No Especificadas,
+Calles Y Carreteras.
+</p>
+
+</div>
+
+
+<div class="metrics">
+
+<div class="metric">
+<div class="metric-label">Defunciones</div>
+<div class="metric-value">11,730</div>
+<div class="metric-note">15.52% del total</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Hombres</div>
+<div class="metric-value">91.99%</div>
+<div class="metric-note">10,791</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Edad media</div>
+<div class="metric-value">34.58</div>
+<div class="metric-note">años</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Mediana</div>
+<div class="metric-value">33</div>
+<div class="metric-note">años</div>
+</div>
+
+</div>
+
+
+<div class="grid2">
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Sexo</h3>
+</div>
+
+<div class="panel-body">
+<div id="agSexo" class="plot"></div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>AfroMexicanos</h3>
+</div>
+
+<div class="panel-body">
+<div id="agAfro" class="plot"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Condición indígena</h3>
+</div>
+
+<div class="panel-body">
+<div id="agInd" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Escolaridad</h3>
+</div>
+
+<div class="panel-body">
+<div id="agEsc" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación</h3>
+</div>
+
+<div class="panel-body">
+<div id="agOcup" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación ampliada</h3>
+</div>
+
+<div class="panel-body">
+<div id="agOcupAmp" class="plot-xl"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estado civil</h3>
+</div>
+
+<div class="panel-body">
+<div id="agEstado" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Edad</h3>
+</div>
+
+<div class="panel-body">
+<div id="agEdad" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estadística descriptiva de edad</h3>
+</div>
+
+<div class="panel-body">
+
+<table>
+
+<tr><td>N</td><td class="num">11,730</td></tr>
+<tr><td>Media</td><td class="num">34.5802</td></tr>
+<tr><td>Desviación estándar</td><td class="num">11.9358</td></tr>
+<tr><td>Mínimo</td><td class="num">1</td></tr>
+<tr><td>Q1</td><td class="num">25</td></tr>
+<tr><td>Mediana</td><td class="num">33</td></tr>
+<tr><td>Q3</td><td class="num">42</td></tr>
+<tr><td>Máximo</td><td class="num">90</td></tr>
+<tr><td>Rango</td><td class="num">89</td></tr>
+<tr><td>IQR</td><td class="num">17</td></tr>
+<tr><td>Asimetría</td><td class="num">0.7032</td></tr>
+<tr><td>Curtosis</td><td class="num">0.3780</td></tr>
+<tr><td>D’Agostino-Pearson</td><td class="num">843.8858</td></tr>
+<tr><td>p de normalidad</td><td class="num">&lt; 0.001</td></tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DIABETES
+========================================================= -->
+
+<section id="diabetes" class="page">
+
+<div class="container">
+
+<div class="cause-banner">
+
+<h2>Diabetes Mellitus Tipo 2</h2>
+
+<p>
+Diabetes Mellitus Tipo 2, con otras complicaciones especificadas.
+</p>
+
+</div>
+
+
+<div class="metrics">
+
+<div class="metric">
+<div class="metric-label">Defunciones</div>
+<div class="metric-value">35,843</div>
+<div class="metric-note">47.41% del total</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Hombres</div>
+<div class="metric-value">50.56%</div>
+<div class="metric-note">18,121</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Edad media</div>
+<div class="metric-value">72.63</div>
+<div class="metric-note">años</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Mediana</div>
+<div class="metric-value">74</div>
+<div class="metric-note">años</div>
+</div>
+
+</div>
+
+
+<div class="grid2">
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Sexo</h3>
+</div>
+
+<div class="panel-body">
+<div id="diSexo" class="plot"></div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>AfroMexicanos</h3>
+</div>
+
+<div class="panel-body">
+<div id="diAfro" class="plot"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Condición indígena</h3>
+</div>
+
+<div class="panel-body">
+<div id="diInd" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Escolaridad</h3>
+</div>
+
+<div class="panel-body">
+<div id="diEsc" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación</h3>
+</div>
+
+<div class="panel-body">
+<div id="diOcup" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación ampliada</h3>
+<p>
+Se presentan las categorías principales disponibles para esta causa.
+El análisis inferencial completo se muestra en la sección de Ji Cuadrada.
+</p>
+</div>
+
+<div class="panel-body">
+<div id="diOcupAmp" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estado civil</h3>
+</div>
+
+<div class="panel-body">
+<div id="diEstado" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Edad</h3>
+</div>
+
+<div class="panel-body">
+<div id="diEdad" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estadística descriptiva de edad</h3>
+</div>
+
+<div class="panel-body">
+
+<table>
+
+<tr><td>N</td><td class="num">35,843</td></tr>
+<tr><td>Media</td><td class="num">72.6340</td></tr>
+<tr><td>Desviación estándar</td><td class="num">13.0194</td></tr>
+<tr><td>Mínimo</td><td class="num">0</td></tr>
+<tr><td>Q1</td><td class="num">64</td></tr>
+<tr><td>Mediana</td><td class="num">74</td></tr>
+<tr><td>Q3</td><td class="num">82</td></tr>
+<tr><td>Máximo</td><td class="num">114</td></tr>
+<tr><td>Rango</td><td class="num">114</td></tr>
+<tr><td>IQR</td><td class="num">18</td></tr>
+<tr><td>Asimetría</td><td class="num">-0.4375</td></tr>
+<tr><td>Curtosis</td><td class="num">-0.0668</td></tr>
+<tr><td>D’Agostino-Pearson</td><td class="num">1055.8017</td></tr>
+<tr><td>p de normalidad</td><td class="num">&lt; 0.001</td></tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     NEUMONIA
+========================================================= -->
+
+<section id="neumonia" class="page">
+
+<div class="container">
+
+<div class="cause-banner">
+
+<h2>Neumonía, no especificada</h2>
+
+<p>
+Distribución descriptiva de las defunciones asociadas a neumonía no especificada.
+</p>
+
+</div>
+
+
+<div class="metrics">
+
+<div class="metric">
+<div class="metric-label">Defunciones</div>
+<div class="metric-value">28,030</div>
+<div class="metric-note">37.08% del total</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Hombres</div>
+<div class="metric-value">54.80%</div>
+<div class="metric-note">15,360</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Edad media</div>
+<div class="metric-value">69.38</div>
+<div class="metric-note">años</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Mediana</div>
+<div class="metric-value">75</div>
+<div class="metric-note">años</div>
+</div>
+
+</div>
+
+
+<div class="grid2">
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Sexo</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnSexo" class="plot"></div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>AfroMexicanos</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnAfro" class="plot"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Condición indígena</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnInd" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Escolaridad</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnEsc" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnOcup" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Ocupación ampliada</h3>
+<p>
+Se presentan las categorías principales disponibles para esta causa.
+El contraste completo se encuentra en Ji Cuadrada.
+</p>
+</div>
+
+<div class="panel-body">
+<div id="pnOcupAmp" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estado civil</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnEstado" class="plot"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Edad</h3>
+</div>
+
+<div class="panel-body">
+<div id="pnEdad" class="plot-large"></div>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Estadística descriptiva de edad</h3>
+</div>
+
+<div class="panel-body">
+
+<table>
+
+<tr><td>N</td><td class="num">28,030</td></tr>
+<tr><td>Media</td><td class="num">69.3814</td></tr>
+<tr><td>Desviación estándar</td><td class="num">21.7682</td></tr>
+<tr><td>Mínimo</td><td class="num">0</td></tr>
+<tr><td>Q1</td><td class="num">60</td></tr>
+<tr><td>Mediana</td><td class="num">75</td></tr>
+<tr><td>Q3</td><td class="num">85</td></tr>
+<tr><td>Máximo</td><td class="num">118</td></tr>
+<tr><td>Rango</td><td class="num">118</td></tr>
+<tr><td>IQR</td><td class="num">25</td></tr>
+<tr><td>Asimetría</td><td class="num">-1.2895</td></tr>
+<tr><td>Curtosis</td><td class="num">1.6036</td></tr>
+<tr><td>D’Agostino-Pearson</td><td class="num">5779.6464</td></tr>
+<tr><td>p de normalidad</td><td class="num">&lt; 0.001</td></tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     JI CUADRADA
+========================================================= -->
+
+<section id="chi" class="page">
+
+<div class="container">
+
+<div class="section-head">
+
+<div class="eyebrow">Análisis inferencial</div>
+
+<h2>Análisis de Ji Cuadrada</h2>
+
+<p>
+Evaluación de la independencia entre la causa de defunción y siete
+variables categóricas.
+</p>
+
+</div>
+
+
+<div class="intro-box">
+
+<h3>¿Qué se está evaluando?</h3>
+
+<p>
+Se utilizó la prueba Ji Cuadrada de independencia para determinar si
+la distribución de cada variable categórica es independiente de la
+causa de defunción.
+</p>
+
+<p>
+La hipótesis nula establece que ambas variables son independientes.
+La hipótesis alternativa establece que existe asociación.
+El nivel de significancia utilizado fue α = 0.05.
+</p>
+
+<p>
+Además de χ² y su valor p, se calculó el <strong>V de Cramér</strong>,
+que permite valorar la magnitud de la asociación. Los residuos
+estandarizados ajustados permiten identificar las combinaciones
+específicas que presentan frecuencias observadas superiores o inferiores
+a las esperadas.
+</p>
+
+<p>
+Para las comparaciones individuales entre celdas se aplicó la
+<strong>corrección de Holm</strong>.
+</p>
+
+</div>
+
+
+<!-- =========================================================
+     EXECUTIVE SUMMARY
+========================================================= -->
+
+<div class="metrics">
+
+<div class="metric">
+<div class="metric-label">Pruebas realizadas</div>
+<div class="metric-value">7</div>
+<div class="metric-note">Variables categóricas</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Significativas</div>
+<div class="metric-value">7 / 7</div>
+<div class="metric-note">α = 0.05</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">Muestra</div>
+<div class="metric-value">75,603</div>
+<div class="metric-note">Defunciones</div>
+</div>
+
+<div class="metric">
+<div class="metric-label">V máximo</div>
+<div class="metric-value">0.341</div>
+<div class="metric-note">Ocupación ampliada</div>
+</div>
+
+</div>
+
+
+<h3 style="margin-top:35px;">Resumen de las asociaciones</h3>
+
+
+<div class="chi-grid">
+
+<div class="chi-card strong">
+
+<div class="variable">Ocupación ampliada</div>
+
+<div class="v">0.341</div>
+
+<div class="description">
+χ² = 17,578.302 · gl = 110
+</div>
+
+<div class="status">
+Mayor magnitud observada
+</div>
+
+</div>
+
+
+<div class="chi-card">
+
+<div class="variable">Sexo</div>
+
+<div class="v">0.294</div>
+
+<div class="description">
+χ² = 6,512.978 · gl = 2
+</div>
+
+<div class="status">Magnitud moderada</div>
+
+</div>
+
+
+<div class="chi-card">
+
+<div class="variable">Estado civil</div>
+
+<div class="v">0.274</div>
+
+<div class="description">
+χ² = 11,378.856 · gl = 14
+</div>
+
+<div class="status">Magnitud moderada</div>
+
+</div>
+
+
+<div class="chi-card">
+
+<div class="variable">Escolaridad</div>
+
+<div class="v">0.271</div>
+
+<div class="description">
+χ² = 11,073.971 · gl = 22
+</div>
+
+<div class="status">Magnitud moderada</div>
+
+</div>
+
+
+<div class="chi-card">
+
+<div class="variable">Ocupación</div>
+
+<div class="v">0.245</div>
+
+<div class="description">
+χ² = 9,075.479 · gl = 22
+</div>
+
+<div class="status">Magnitud moderada</div>
+
+</div>
+
+
+<div class="chi-card weak">
+
+<div class="variable">Condición indígena</div>
+
+<div class="v">0.080</div>
+
+<div class="description">
+χ² = 969.957 · gl = 6
+</div>
+
+<div class="status">Magnitud muy débil</div>
+
+</div>
+
+
+<div class="chi-card weak">
+
+<div class="variable">AfroMexicanos</div>
+
+<div class="v">0.051</div>
+
+<div class="description">
+χ² = 387.380 · gl = 6
+</div>
+
+<div class="status">Magnitud muy débil</div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>V de Cramér</h3>
+
+<p>
+El tamaño de las barras representa el valor de V, no el valor de χ².
+</p>
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiV" class="plot"></div>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+<h3>Resultados globales</h3>
+</div>
+
+<div class="panel-body">
+
+<div class="table-scroll">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Variable</th>
+<th class="num">χ²</th>
+<th class="num">gl</th>
+<th>p</th>
+<th class="num">V</th>
+<th>Magnitud</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>Sexo</td>
+<td class="num">6,512.978</td>
+<td class="num">2</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.294</td>
+<td>Moderada</td>
+</tr>
+
+<tr>
+<td>Escolaridad</td>
+<td class="num">11,073.971</td>
+<td class="num">22</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.271</td>
+<td>Moderada</td>
+</tr>
+
+<tr>
+<td>Ocupación ampliada</td>
+<td class="num">17,578.302</td>
+<td class="num">110</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.341</td>
+<td>Fuerte</td>
+</tr>
+
+<tr>
+<td>Ocupación</td>
+<td class="num">9,075.479</td>
+<td class="num">22</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.245</td>
+<td>Moderada</td>
+</tr>
+
+<tr>
+<td>Estado civil</td>
+<td class="num">11,378.856</td>
+<td class="num">14</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.274</td>
+<td>Moderada</td>
+</tr>
+
+<tr>
+<td>Condición indígena</td>
+<td class="num">969.957</td>
+<td class="num">6</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.080</td>
+<td>Muy débil</td>
+</tr>
+
+<tr>
+<td>AfroMexicanos</td>
+<td class="num">387.380</td>
+<td class="num">6</td>
+<td class="significant">&lt; 0.001</td>
+<td class="num">0.051</td>
+<td>Muy débil</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     SEXO
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>1. Causa × Sexo</h3>
+
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiSexo" class="plot"></div>
+
+<div class="note info">
+
+<strong>Resultado:</strong>
+χ² = 6,512.978; gl = 2; p &lt; 0.001;
+V de Cramér = 0.294.
+
+Los residuos muestran que la proporción de hombres en agresión es
+superior a la esperada bajo independencia, mientras que la proporción
+de mujeres es inferior a la esperada.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     ESCOLARIDAD
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>2. Causa × Escolaridad</h3>
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiEsc" class="plot-large"></div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     OCUPACION
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>3. Causa × Ocupación</h3>
+
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiOcup" class="plot-large"></div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     OCUPACION AMPLIADA
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>4. Causa × Ocupación ampliada</h3>
+
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiOcupAmp" class="plot-xl"></div>
+
+<div class="note warning">
+
+<strong>Advertencia metodológica:</strong>
+17.26% de las celdas presenta una frecuencia esperada inferior a 5.
+La elevada cantidad de categorías debe considerarse al interpretar
+el contraste global.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     ESTADO CIVIL
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>5. Causa × Estado civil</h3>
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiEstado" class="plot-large"></div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     INDIGENA
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>6. Causa × Condición indígena</h3>
+
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiInd" class="plot"></div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     AFRO
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>7. Causa × AfroMexicanos</h3>
+
+</div>
+
+<div class="panel-body">
+
+<div id="chiAfro" class="plot"></div>
+
+<div class="note warning">
+
+<strong>Nota de validación:</strong>
+las celdas que anteriormente aparecieron duplicadas con la tabla de
+Condición indígena fueron excluidas de esta visualización hasta contar
+con una verificación del cálculo original.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     INTERPRETACION FINAL
+========================================================= -->
+
+<div class="panel">
+
+<div class="panel-header">
+
+<h3>Lectura general del análisis</h3>
+
+</div>
+
+<div class="panel-body">
+
+<div class="method-grid">
+
+<div class="note">
+
+<strong>1. Asociación estadística</strong><br>
+Las siete variables categóricas analizadas presentan evidencia
+estadística de asociación con la causa de defunción bajo α = 0.05.
+
+</div>
+
+<div class="note">
+
+<strong>2. Magnitud</strong><br>
+El tamaño de las asociaciones es diferente entre variables.
+El V de Cramér permite distinguir la significancia estadística
+de la magnitud de la asociación.
+
+</div>
+
+<div class="note">
+
+<strong>3. Celdas específicas</strong><br>
+Los residuos ajustados muestran dónde se concentran las diferencias
+entre las frecuencias observadas y las esperadas.
+
+</div>
+
+<div class="note">
+
+<strong>4. Precaución</strong><br>
+Los resultados muestran asociaciones estadísticas y no deben
+interpretarse como relaciones causales.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+<strong>
+Elaborado por: Equipo de 2° Semestre de la Maestría en Estadística Aplicada
+</strong>
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN PLOTLY
+========================================================= */
+
+const CONFIG={
+    responsive:true,
+    displaylogo:false,
+    modeBarButtonsToRemove:[
+        "lasso2d",
+        "select2d"
+    ]
+};
+
+const LAYOUT={
+    font:{
+        family:"Google Sans, Arial, sans-serif",
+        color:"#202124",
+        size:17
+    },
+    paper_bgcolor:"#ffffff",
+    plot_bgcolor:"#ffffff",
+    margin:{
+        l:70,
+        r:50,
+        t:30,
+        b:80
+    }
+};
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+function cambiarPagina(id){
+
+    document.querySelectorAll(".page")
+        .forEach(x=>x.classList.remove("active"));
+
+    document.getElementById(id)
+        .classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================================================
+   FUNCIONES GRÁFICAS
+========================================================= */
+
+function pct(v,total){
+    return (v/total*100).toFixed(2);
+}
+
+
+function bar(id,labels,values,total,horizontal=false){
+
+    const datos=labels.map((x,i)=>({
+        label:x,
+        value:values[i]
+    })).sort((a,b)=>b.value-a.value);
+
+    const cats=datos.map(x=>x.label);
+    const vals=datos.map(x=>x.value);
+
+    const trace={
+        type:"bar",
+        orientation:horizontal?"h":"v",
+        x:horizontal?vals:cats,
+        y:horizontal?cats:vals,
+        text:vals.map(v=>pct(v,total)+"%"),
+        textposition:"outside",
+        textfont:{size:13},
+        cliponaxis:false,
+
+        hoverlabel:{
+            font:{
+                size:28
+            }
+        },
+
+        customdata:vals.map(v=>[
+            v,
+            pct(v,total)
+        ]),
+        hovertemplate:horizontal
+            ?
+            "<b>%{y}</b><br>"+
+            "Total: %{customdata[0]:,}<br>"+
+            "Porcentaje: %{customdata[1]}%"+
+            "<extra></extra>"
+            :
+            "<b>%{x}</b><br>"+
+            "Total: %{customdata[0]:,}<br>"+
+            "Porcentaje: %{customdata[1]}%"+
+            "<extra></extra>"
+    };
+
+    let layout={
+        ...LAYOUT,
+        xaxis:{
+            automargin:true
+        },
+        yaxis:{
+            automargin:true
+        }
+    };
+
+    if(horizontal){
+
+        layout.height=Math.max(
+            600,
+            cats.length*42
+        );
+
+        layout.width=1400;
+
+        layout.yaxis.autorange="reversed";
+        layout.xaxis.title="Número de defunciones";
+
+    }else{
+
+        layout.xaxis.tickangle=-35;
+        layout.yaxis.title="Número de defunciones";
+
+    }
+
+    Plotly.newPlot(
+        id,
+        [trace],
+        layout,
+        CONFIG
+    );
+}
+
+
+function pie(id,labels,values,total){
+
+    Plotly.newPlot(
+        id,
+        [{
+            type:"pie",
+            labels:labels,
+            values:values,
+            hole:.40,
+            textinfo:"label+percent",
+            textposition:"outside",
+            hoverlabel:{
+                font:{
+                    size:28
+                }
+            },
+            marker:{
+                colors:[
+                "#17365d",
+                "#d81b60"
+                ]
+            },
+            hovertemplate:
+                "<b>%{label}</b><br>"+
+                "Total: %{value:,}<br>"+
+                "Porcentaje: %{percent}"+
+                "<extra></extra>"
+        }],
+        {
+            ...LAYOUT,
+            showlegend:true
+        },
+        CONFIG
+    );
+}
+
+
+function residual(id,data,height=600){
+
+    /* ORDENAR DE MAYOR A MENOR RESIDUAL */
+    const datos=data
+        .slice()
+        .sort((a,b)=>b.res-a.res);
+
+    const esMovil=window.innerWidth<=600;
+
+    const altura=esMovil
+        ? Math.max(700,datos.length*35)
+        : Math.max(height,datos.length*27);
+
+    const trace={
+        type:"scatter",
+        mode:"markers",
+
+        x:datos.map(x=>x.res),
+        y:datos.map(x=>x.label),
+
+marker:{
+    size:21,
+
+    color:datos.map(x =>
+        x.res>0
+            ? "#17365d"
+            : "#d32f2f"
+    )
+},
+
+        hoverlabel:{
+            font:{
+                size:20
+            }
+        },
+
+        customdata:datos.map(x=>[
+            x.causa,
+            x.obs,
+            x.exp,
+            x.pct,
+            x.padj,
+            x.res>0
+                ? "Mayor de lo esperado"
+                : "Menor de lo esperado"
+        ]),
+
+        hovertemplate:
+            "<b>%{y}</b><br>"+
+            "Causa: %{customdata[0]}<br>"+
+            "Observado: %{customdata[1]:,}<br>"+
+            "Esperado: %{customdata[2]:,.2f}<br>"+
+            "Residual: %{x:.3f}<br>"+
+            "Porcentaje dentro de causa: %{customdata[3]}%<br>"+
+            "p ajustado: %{customdata[4]}<br>"+
+            "%{customdata[5]}"+
+            "<extra></extra>"
+    };
+
+    Plotly.newPlot(
+        id,
+        [trace],
+        {
+            ...LAYOUT,
+
+            width:1400,
+
+            height:altura,
+
+            xaxis:{
+                title:"Residual estandarizado ajustado",
+                zeroline:true,
+                zerolinewidth:2,
+                automargin:true
+            },
+
+            yaxis:{
+                autorange:"reversed",
+                automargin:true
+            }
+        },
+
+        {
+            ...CONFIG,
+            responsive:true
+        }
+    );
+}
+
+function edadPlot(id,data){
+
+    Plotly.newPlot(
+        id,
+        [{
+            type:"bar",
+
+            x:data.map(x=>x[0]),
+            y:data.map(x=>x[1]),
+
+            customdata:data.map(x=>[
+                x[1],
+                pct(x[1],data.reduce((a,b)=>a+b[1],0))
+            ]),
+
+            hoverlabel:{
+                font:{
+                    size:20
+                }
+            },
+
+            hovertemplate:
+                "<b>Edad: %{x} años</b><br>"+
+                "Total: %{customdata[0]:,}<br>"+
+                "Porcentaje: %{customdata[1]}%"+
+                "<extra></extra>"
+        }],
+
+        {
+            ...LAYOUT,
+
+            
+            width:1400,
+            height:500,
+            
+            margin:{
+                l:80,
+                r:40,
+                t:30,
+                b:80
+            },
+
+            xaxis:{
+                title:"Edad (años)",
+                dtick:5,
+                automargin:true,
+
+                tickfont:{
+                    size:17
+                },
+
+                titlefont:{
+                    size:28
+                }
+            },
+
+            yaxis:{
+                title:"Número de defunciones",
+                automargin:true,
+
+                tickfont:{
+                    size:17
+                },
+
+                titlefont:{
+                    size:28
+                }
+            }
+        },
+
+        {
+            ...CONFIG,
+            responsive:true
+        }
+    );
+}
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+bar(
+    "generalCausas",
+    [
+        "Diabetes Mellitus Tipo 2",
+        "Neumonía",
+        "Agresión"
+    ],
+    [
+        35843,
+        28030,
+        11730
+    ],
+    75603
+);
+
+pie(
+    "generalSexo",
+    ["Hombre","Mujer"],
+    [44272,31331],
+    75603
+);
+
+bar(
+    "generalIndigena",
+    ["No","No aplica","Si","No especificado"],
+    [62970,4552,4162,3919],
+    75603
+);
+
+bar(
+    "generalEscolaridad",
+    [
+        "Primaria completa",
+        "Primaria incompleta",
+        "Secundaria completa",
+        "Sin escolaridad",
+        "Profesional",
+        "Bachillerato o preparatoria completo",
+        "Secundaria incompleta",
+        "No especificado",
+        "Bachillerato o preparatoria incompleto",
+        "No aplica a menores de 3",
+        "Posgrado",
+        "Preescolar"
+    ],
+    [
+        17691,16165,11375,11159,5986,5870,
+        2208,2138,1660,821,411,119
+    ],
+    75603
+);
+
+bar(
+    "generalOcupacion",
+    [
+        "No especificado / fuera de clasificación",
+        "Agropecuario y pesca",
+        "Construcción y manufactura",
+        "Comercio y ventas",
+        "Operadores y transporte",
+        "Trabajo elemental y apoyo",
+        "Profesionistas",
+        "Técnicos y auxiliares",
+        "Servicios",
+        "Administrativos",
+        "Dirección y gerencia",
+        "Fuerzas armadas"
+    ],
+    [
+        48736,6534,5415,5090,2498,1965,
+        1640,1473,1348,540,315,49
+    ],
+    75603,
+    true
+);
+
+
+/* =========================================================
+   OCUPACION AMPLIADA GENERAL
+========================================================= */
+
+bar(
+    "generalOcupacionAmp",
+
+    [
+        "No trabaja",
+        "Trabajadores en actividades agrícolas y ganaderas",
+        "Comerciantes en establecimientos",
+        "Ocupaciones insuficientemente especificadas",
+        "No especificada",
+        "Trabajadores en la extracción y la edificación de construcciones",
+        "Conductores de transporte y de maquinaria móvil",
+        "Otros trabajadores artesanales no clasificados anteriormente",
+        "Auxiliares y técnicos en ciencias exactas, biológicas, ingeniería, informática y telecomunicaciones",
+        "No aplica a menores de 5 años",
+        "Trabajadores en servicios de protección y vigilancia",
+        "Trabajadores de apoyo en actividades agropecuarias, forestales, pesca y caza",
+        "Profesionistas económico-administrativos, sociales, humanistas y artes",
+        "Profesores y especialistas en docencia",
+        "Artesanos y trabajadores del metal",
+        "Artesanos y trabajadores de madera, papel, textiles, cuero y piel",
+        "Trabajadores domésticos y de limpieza",
+        "Trabajadores de apoyo en minería, construcción e industria",
+        "Preparación y servicio de alimentos y hotelería",
+        "Supervisores de apoyo administrativo",
+        "Trabajadores en cuidados personales y del hogar",
+        "Otros directores, funcionarios, gerentes y jefes",
+        "Elaboración y procesamiento de alimentos, bebidas y tabaco",
+        "Empleados de ventas",
+        "Otros auxiliares administrativos",
+        "Investigadores y profesionistas en ciencias exactas",
+        "Médicos, enfermeras y especialistas en salud",
+        "Otros profesionistas y técnicos",
+        "Otros operadores y ensambladores",
+        "Enfermeras, técnicos en medicina y apoyo en salud",
+        "Actividades pesqueras, forestales y caza",
+        "Auxiliares económico-administrativos y sociales",
+        "Paquetería, mensajería y reparto",
+        "Operadores de instalaciones y maquinaria",
+        "Ayudantes de conductores y cargadores",
+        "Cerámica, vidrio y azulejo",
+        "Otros trabajadores elementales",
+        "Vendedores ambulantes",
+        "Otros comerciantes y agentes de ventas",
+        "Armada, Ejército y Fuerza Aérea",
+        "Supervisores y trabajadores de información",
+        "Hule, caucho, plásticos y sustancias químicas",
+        "Funcionarios y altas autoridades",
+        "Auxiliares y técnicos en educación",
+        "Ayudantes en preparación de alimentos",
+        "Coordinadores y jefes en servicios financieros y administrativos",
+        "Otros trabajadores agrícolas y ganaderos",
+        "Coordinadores y jefes en producción y tecnología",
+        "Directores y gerentes financieros y administrativos",
+        "Directores y gerentes de ventas, restaurantes y hoteles",
+        "Trabajadores en servicios de alquiler",
+        "Operadores de maquinaria agropecuaria y forestal",
+        "Coordinadores y jefes de ventas y hoteles",
+        "Directores y gerentes en producción y tecnología",
+        "Ensambladores y montadores",
+        "Busca trabajo"
+    ],
+
+    [
+        41633,6358,4801,3511,2678,2529,2252,1432,
+        994,912,814,789,628,584,581,547,506,370,
+        280,271,254,238,230,227,225,221,207,173,
+        158,158,157,128,99,85,70,60,58,57,55,49,
+        44,36,22,20,16,14,14,12,11,11,7,5,4,3,3,2
+    ],
+
+    75603,
+    true
+);
+
+bar(
+    "generalEstado",
+    [
+        "Casado(a)",
+        "Soltero(a)",
+        "Viudo(a)",
+        "Union Libre",
+        "No especificado",
+        "Divorciado(a)",
+        "No aplica a menores de 12",
+        "Separado(a)"
+    ],
+    [
+        24910,19163,16906,7236,
+        3683,1642,1050,1013
+    ],
+    75603
+);
+
+
+/* EDAD GENERAL */
+
+const edadGeneral=[
+[0,306],[1,355],[2,112],[3,72],[4,45],[5,30],[6,19],[7,18],
+[8,18],[9,24],[10,18],[11,20],[12,15],[13,28],[14,40],[15,69],
+[16,131],[17,185],[18,263],[19,291],[20,334],[21,359],[22,399],
+[23,395],[24,427],[25,474],[26,465],[27,452],[28,471],[29,478],
+[30,513],[31,516],[32,558],[33,510],[34,482],[35,491],[36,442],
+[37,450],[38,470],[39,475],[40,436],[41,469],[42,484],[43,441],
+[44,504],[45,525],[46,528],[47,551],[48,586],[49,587],[50,636],
+[51,694],[52,732],[53,722],[54,711],[55,799],[56,809],[57,880],
+[58,892],[59,943],[60,1051],[61,1093],[62,1106],[63,1160],
+[64,1173],[65,1261],[66,1316],[67,1416],[68,1341],[69,1530],
+[70,1458],[71,1580],[72,1506],[73,1583],[74,1651],[75,1693],
+[76,1590],[77,1682],[78,1799],[79,1767],[80,1708],[81,1675],
+[82,1720],[83,1586],[84,1745],[85,1558],[86,1502],[87,1521],
+[88,1427],[89,1286],[90,1235],[91,1039],[92,938],[93,773],
+[94,751],[95,556],[96,446],[97,334],[98,248],[99,222],[100,141],
+[101,115],[102,78],[103,30],[104,35],[105,10],[106,10],[108,2],
+[109,4],[110,1],[114,1],[118,1]
+];
+
+edadPlot(
+    "generalEdad",
+    edadGeneral
+);
+
+
+/* =========================================================
+   FUNCIONES PARA CAUSAS
+========================================================= */
+
+
+/* AGRESION */
+
+pie(
+    "agSexo",
+    ["Hombre","Mujer"],
+    [10791,939],
+    11730
+);
+
+bar(
+    "agAfro",
+    ["No","No especificado","No aplica","Si"],
+    [10046,902,725,57],
+    11730,
+    true
+);
+
+bar(
+    "agInd",
+    ["No","No especificado","No aplica","Si"],
+    [9544,1172,725,289],
+    11730,
+    true
+);
+
+bar(
+    "agEsc",
+    [
+        "Secundaria completa",
+        "Primaria completa",
+        "Bachillerato o preparatoria completo",
+        "Secundaria incompleta",
+        "Primaria incompleta",
+        "Profesional",
+        "Bachillerato o preparatoria incompleto",
+        "Sin escolaridad",
+        "No especificado",
+        "Posgrado",
+        "Preescolar",
+        "No aplica a menores de 3"
+    ],
+    [
+        3825,2193,1641,945,887,882,
+        797,316,175,47,17,5
+    ],
+    11730,
+   true
+);
+
+bar(
+    "agOcup",
+    [
+        "No especificado / fuera de clasificación",
+        "Construcción y manufactura",
+        "Comercio y ventas",
+        "Trabajo elemental y apoyo",
+        "Operadores y transporte",
+        "Agropecuario y pesca",
+        "Servicios",
+        "Técnicos y auxiliares",
+        "Profesionistas",
+        "Administrativos",
+        "Dirección y gerencia",
+        "Fuerzas armadas"
+    ],
+    [
+        3807,1875,1536,1039,1008,964,
+        504,470,225,154,115,33
+    ],
+    11730,
+    true
+);
+
+bar(
+    "agEstado",
+    [
+        "Soltero(a)",
+        "Union Libre",
+        "Casado(a)",
+        "No especificado",
+        "Divorciado(a)",
+        "Separado(a)",
+        "Viudo(a)",
+        "No aplica a menores de 12"
+    ],
+    [
+        5702,2798,2171,559,208,159,102,31
+    ],
+    11730,
+    true
+);
+
+edadPlot(
+    "agEdad",
+    [
+        [1,1],[2,1],[3,3],[4,1],[6,4],[7,2],[8,6],
+        [10,6],[11,6],[12,1],[13,13],[14,24],[15,58],
+        [16,110],[17,166],[18,229],[19,258],[20,287],
+        [21,310],[22,348],[23,327],[24,377],[25,399],
+        [26,390],[27,392],[28,381],[29,389],[30,420],
+        [31,414],[32,438],[33,412],[34,358],[35,342],
+        [36,316],[37,296],[38,301],[39,310],[40,266],
+        [41,285],[42,269],[43,215],[44,242],[45,214],
+        [46,195],[47,186],[48,186],[49,164],[50,158],
+        [51,163],[52,128],[53,113],[54,104],[55,89],
+        [56,70],[57,74],[58,80],[59,55],[60,52],[61,39],
+        [62,43],[63,44],[64,23],[65,18],[66,22],[67,12],
+        [68,14],[69,16],[70,16],[71,12],[72,7],[73,6],
+        [74,8],[75,7],[76,8],[77,6],[78,7],[79,3],
+        [80,2],[81,2],[82,4],[83,1],[84,1],[85,2],[86,2],
+        [90,1]
+    ]
+);
+
+
+/* AGRESION OCUPACION AMPLIADA */
+
+bar(
+    "agOcupAmp",
+    [
+        "Ocupaciones insuficientemente especificadas",
+        "No trabaja",
+        "Comerciantes en establecimientos",
+        "Trabajadores en la extracción y la edificación de construcciones",
+        "Conductores de transporte y de maquinaria móvil",
+        "Trabajadores en actividades agrícolas y ganaderas",
+        "Apoyo agropecuario, forestal, pesca y caza",
+        "Otros trabajadores artesanales",
+        "Auxiliares y técnicos en ciencias exactas",
+        "Protección y vigilancia",
+        "Apoyo en minería, construcción e industria",
+        "No especificada",
+        "Artesanos del metal",
+        "Trabajadores domésticos y de limpieza",
+        "Profesionistas económico-administrativos",
+        "Cuidados personales y del hogar",
+        "Otros auxiliares administrativos",
+        "Empleados de ventas",
+        "Preparación de alimentos y hotelería",
+        "Madera, papel, textiles, cuero y piel",
+        "Otros directores y gerentes",
+        "Paquetería y reparto",
+        "Elaboración de alimentos y bebidas",
+        "Profesores y especialistas en docencia",
+        "Supervisores de apoyo administrativo",
+        "Otros operadores y ensambladores",
+        "Ayudantes de conductores",
+        "Otros trabajadores elementales",
+        "Otros profesionistas y técnicos",
+        "Pesca, forestal y caza",
+        "Investigadores y profesionistas",
+        "Armada, Ejército y Fuerza Aérea",
+        "Auxiliares económico-administrativos",
+        "Enfermeras y técnicos en medicina",
+        "Operadores de instalaciones",
+        "Hule, caucho, plásticos y químicos",
+        "Médicos y especialistas en salud",
+        "Cerámica, vidrio y azulejo",
+        "Otros comerciantes y agentes de ventas",
+        "Vendedores ambulantes",
+        "Funcionarios y altas autoridades",
+        "Supervisores e información",
+        "Ayudantes en preparación de alimentos",
+        "Coordinadores en servicios financieros",
+        "No aplica a menores de 5",
+        "Directores y gerentes financieros",
+        "Coordinadores en producción",
+        "Otros trabajadores agrícolas",
+        "Servicios de alquiler",
+        "Auxiliares y técnicos en educación",
+        "Ensambladores",
+        "Coordinadores de ventas y hoteles",
+        "Operadores de maquinaria agropecuaria",
+        "Directores de ventas y hoteles"
+    ],
+    [
+        1876,1689,1422,1097,932,924,412,389,375,310,256,236,
+        198,191,115,108,95,94,86,84,83,70,66,56,50,47,45,40,
+        35,35,34,33,29,29,27,21,20,20,17,16,12,9,9,7,6,6,
+        4,4,3,2,2,2,1,1
+    ],
+    11730,
+    true
+);
+
+
+/* =========================================================
+   DIABETES
+========================================================= */
+
+pie(
+    "diSexo",
+    ["Hombre","Mujer"],
+    [18121,17722],
+    35843
+);
+
+bar(
+    "diAfro",
+    ["No","No aplica","No especificado","Si"],
+    [31635,2454,1508,246],
+    35843,
+    true
+);
+
+bar(
+    "diInd",
+    ["No","No aplica","Si","No especificado"],
+    [29786,2454,2139,1464],
+    35843,
+    true
+);
+
+bar(
+    "diEsc",
+    [
+        "Primaria completa",
+        "Primaria incompleta",
+        "Sin escolaridad",
+        "Secundaria completa",
+        "Profesional",
+        "Bachillerato o preparatoria completo",
+        "No especificado",
+        "Secundaria incompleta",
+        "Bachillerato o preparatoria incompleto",
+        "Posgrado",
+        "Preescolar",
+        "No aplica a menores de 3"
+    ],
+    [
+        9583,8957,6456,4159,2567,2128,
+        836,599,401,124,32,1
+    ],
+    35843,
+    true
+);
+
+bar(
+    "diOcup",
+    [
+        "No especificado / fuera de clasificación",
+        "Agropecuario y pesca",
+        "Comercio y ventas",
+        "Construcción y manufactura",
+        "Operadores y transporte",
+        "Profesionistas",
+        "Técnicos y auxiliares",
+        "Trabajo elemental y apoyo",
+        "Servicios",
+        "Administrativos",
+        "Dirección y gerencia",
+        "Fuerzas armadas"
+    ],
+    [
+        25050,3363,2151,2039,904,715,
+        533,441,401,153,86,7
+    ],
+    35843,
+    true
+);
+
+bar(
+    "diEstado",
+    [
+        "Casado(a)",
+        "Viudo(a)",
+        "Soltero(a)",
+        "Union Libre",
+        "No especificado",
+        "Divorciado(a)",
+        "Separado(a)",
+        "No aplica a menores de 12"
+    ],
+    [
+        13331,9501,7501,2552,1736,740,481,1
+    ],
+    35843,
+    true
+);
+
+edadPlot(
+    "diEdad",
+    [
+        [0,1],[16,1],[17,1],[18,1],[20,1],[21,4],[22,3],
+        [23,1],[24,5],[25,7],[26,5],[27,9],[28,7],[29,14],
+        [30,9],[31,14],[32,14],[33,17],[34,31],[35,40],
+        [36,31],[37,46],[38,51],[39,63],[40,64],[41,74],
+        [42,81],[43,92],[44,123],[45,157],[46,170],[47,181],
+        [48,209],[49,223],[50,272],[51,324],[52,328],[53,374],
+        [54,371],[55,430],[56,457],[57,487],[58,487],[59,571],
+        [60,633],[61,663],[62,675],[63,719],[64,744],[65,833],
+        [66,884],[67,896],[68,860],[69,971],[70,910],[71,1035],
+        [72,975],[73,1007],[74,1030],[75,1026],[76,1025],
+        [77,1045],[78,1072],[79,1069],[80,1047],[81,1030],
+        [82,1020],[83,895],[84,996],[85,850],[86,835],[87,816],
+        [88,736],[89,636],[90,597],[91,527],[92,446],[93,343],
+        [94,342],[95,215],[96,183],[97,121],[98,88],[99,70],
+        [100,40],[101,33],[102,28],[103,11],[104,10],[105,1],
+        [106,1],[108,1],[109,1],[114,1]
+    ]
+);
+
+
+/* Ocupación ampliada diabetes: distribución completa */
+
+bar(
+    "diOcupAmp",
+    [
+        "No trabaja",
+        "Trabajadores en actividades agrícolas y ganaderas",
+        "Comerciantes en establecimientos",
+        "No especificada",
+        "Ocupaciones insuficientemente especificadas",
+        "Conductores de transporte y de maquinaria móvil",
+        "Trabajadores en la extracción y la edificación de construcciones",
+        "Otros trabajadores artesanales no clasificados anteriormente",
+        "Auxiliares y técnicos en ciencias exactas, biológicas, ingeniería, informática y en telecomunicaciones",
+        "Profesores y especialistas en docencia",
+        "Artesanos y trabajadores en la elaboración de productos de madera, papel, textiles y de cuero y piel",
+        "Profesionistas en ciencias económico-administrativas, ciencias sociales, humanistas y en artes",
+        "Trabajadores en servicios de protección y vigilancia",
+        "Trabajadores de apoyo en actividades agropecuarias, forestales, pesca y caza",
+        "Artesanos y trabajadores en el tratamiento y elaboración de productos de metal",
+        "Trabajadores domésticos, de limpieza, planchadores y otros trabajadores de limpieza",
+        "Trabajadores en la elaboración y procesamiento de alimentos, bebidas y productos de tabaco",
+        "Médicos, enfermeras y otros especialistas en salud",
+        "Trabajadores en la preparación y servicio de alimentos y bebidas, así como en servicios de esparcimiento y de hotelería",
+        "Supervisores de personal de apoyo administrativo, secretarias, capturistas, cajeros y trabajadores de control de archivo y transporte",
+        "Investigadores y profesionistas en ciencias exactas, biológicas, ingeniería, informática y en telecomunicaciones",
+        "Enfermeras, técnicos en medicina y trabajadores de apoyo en salud",
+        "Otros profesionistas y técnicos no clasificados anteriormente",
+        "Trabajadores en cuidados personales y del hogar",
+        "Trabajadores en actividades pesqueras, forestales, caza y similares",
+        "Otros directores, funcionarios, gerentes, coordinadores y jefes de área, no clasificados anteriormente",
+        "Otros operadores de maquinaria industrial, ensambladores y conductores de transporte, no clasificados anteriormente",
+        "Otros trabajadores auxiliares en actividades administrativas, no clasificados anteriormente",
+        "Empleados de ventas en establecimientos",
+        "Auxiliares y técnicos en ciencias económico-administrativas, ciencias sociales, humanistas y en artes",
+        "Trabajadores de apoyo en la minería, construcción e industria",
+        "Operadores de instalaciones y maquinaria industrial",
+        "Vendedores ambulantes",
+        "Artesanos y trabajadores en la elaboración de productos de cerámica, vidrio, azulejo y similares",
+        "Ayudantes de conductores de transporte, conductores de transporte de tracción humana y animal y cargadores",
+        "Otros comerciantes, empleados en ventas y agentes de ventas en establecimientos, no clasificados anteriormente",
+        "Artesanos y trabajadores en la elaboración de productos de hule, caucho, plásticos y de sustancias químicas",
+        "Trabajadores de paquetería, de apoyo para espectáculos, mensajeros y repartidores de mercancías",
+        "Supervisores y trabajadores que brindan y manejan información",
+        "Trabajadores de la Armada, Ejército y Fuerza Aérea",
+        "Auxiliares y técnicos en educación, instructores y capacitadores",
+        "Directores y gerentes de ventas, restaurantes, hoteles y otros establecimientos",
+        "Ayudantes en la preparación de alimentos",
+        "Otros trabajadores en actividades agrícolas, ganaderas, forestales, caza y pesca, no clasificados anteriormente",
+        "Funcionarios y altas autoridades de los sectores público, privado y social",
+        "Directores y gerentes en servicios financieros, legales, administrativos y sociales",
+        "Coordinadores y jefes de área en servicios financieros, administrativos y sociales",
+        "Operadores de maquinaria agropecuaria y forestal",
+        "Trabajadores en servicios de alquiler",
+        "Directores y gerentes en producción, tecnología y transporte",
+        "Coordinadores y jefes de área en producción y tecnología",
+        "Otros trabajadores en actividades elementales y de apoyo, no clasificados anteriormente",
+        "No aplica a menores de 5 años",
+        "Busca trabajo",
+        "Coordinadores y jefes de área de ventas, restaurantes, hoteles y otros establecimientos"
+    ],
+    [
+        22987,
+        3290,
+        2084,
+        1149,
+        912,
+        817,
+        800,
+        625,
+        335,
+        281,
+        271,
+        250,
+        244,
+        230,
+        217,
+        122,
+        101,
+        98,
+        88,
+        88,
+        86,
+        71,
+        71,
+        69,
+        67,
+        67,
+        57,
+        56,
+        54,
+        50,
+        42,
+        30,
+        21,
+        16,
+        12,
+        11,
+        9,
+        9,
+        9,
+        7,
+        6,
+        5,
+        4,
+        4,
+        4,
+        3,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+    ],
+    35843,
+    true
+);
+
+
+/* =========================================================
+   NEUMONIA
+========================================================= */
+
+pie(
+    "pnSexo",
+    ["Hombre","Mujer"],
+    [15360,12670],
+    28030
+);
+
+bar(
+    "pnAfro",
+    ["No","No aplica","No especificado","Si"],
+    [25307,1373,1156,194],
+    28030,
+    true
+);
+
+bar(
+    "pnInd",
+    ["No","Si","No aplica","No especificado"],
+    [23640,1734,1373,1283],
+    28030,
+    true
+);
+
+bar(
+    "pnEsc",
+    [
+        "Primaria incompleta",
+        "Primaria completa",
+        "Sin escolaridad",
+        "Secundaria completa",
+        "Profesional",
+        "Bachillerato o preparatoria completo",
+        "No especificado",
+        "No aplica a menores de 3",
+        "Secundaria incompleta",
+        "Bachillerato o preparatoria incompleto",
+        "Posgrado",
+        "Preescolar"
+    ],
+    [
+        6321,5915,4387,3391,2537,2101,
+        1127,815,664,462,240,70
+    ],
+    28030,
+    true
+);
+
+bar(
+    "pnOcup",
+    [
+        "No especificado / fuera de clasificación",
+        "Agropecuario y pesca",
+        "Construcción y manufactura",
+        "Comercio y ventas",
+        "Profesionistas",
+        "Operadores y transporte",
+        "Trabajo elemental y apoyo",
+        "Técnicos y auxiliares",
+        "Servicios",
+        "Administrativos",
+        "Dirección y gerencia",
+        "Fuerzas armadas"
+    ],
+    [
+        19879,2207,1501,1403,700,586,
+        485,470,443,233,114,9
+    ],
+    28030,
+    true
+);
+
+bar(
+    "pnEstado",
+    [
+        "Casado(a)",
+        "Viudo(a)",
+        "Soltero(a)",
+        "Union Libre",
+        "No especificado",
+        "No aplica a menores de 12",
+        "Divorciado(a)",
+        "Separado(a)"
+    ],
+    [
+        9408,7303,5960,1886,1388,1018,694,373
+    ],
+    28030,
+    true
+);
+
+edadPlot(
+    "pnEdad",
+    [
+        [0,305],[1,354],[2,111],[3,69],[4,44],[5,30],[6,15],
+        [7,16],[8,12],[9,24],[10,12],[11,14],[12,14],[13,15],
+        [14,16],[15,11],[16,20],[17,18],[18,33],[19,33],[20,46],
+        [21,45],[22,48],[23,67],[24,45],[25,68],[26,70],[27,51],
+        [28,83],[29,75],[30,84],[31,88],[32,106],[33,81],[34,93],
+        [35,109],[36,95],[37,108],[38,118],[39,102],[40,106],
+        [41,110],[42,134],[43,134],[44,139],[45,154],[46,163],
+        [47,184],[48,191],[49,200],[50,206],[51,207],[52,276],
+        [53,235],[54,236],[55,280],[56,282],[57,319],[58,325],
+        [59,317],[60,366],[61,391],[62,388],[63,397],[64,406],
+        [65,410],[66,410],[67,508],[68,467],[69,543],[70,532],
+        [71,533],[72,524],[73,570],[74,613],[75,660],[76,557],
+        [77,631],[78,720],[79,695],[80,659],[81,643],[82,696],
+        [83,690],[84,748],[85,706],[86,665],[87,705],[88,691],
+        [89,650],[90,637],[91,512],[92,492],[93,430],[94,409],
+        [95,341],[96,263],[97,213],[98,160],[99,152],[100,101],
+        [101,82],[102,50],[103,19],[104,25],[105,9],[106,9],
+        [108,1],[109,3],[110,1],[118,1]
+    ]
+);
+
+bar(
+    "pnOcupAmp",
+    [
+        "No trabaja",
+        "Trabajadores en actividades agrícolas y ganaderas",
+        "Comerciantes en establecimientos",
+        "No especificada",
+        "No aplica a menores de 5 años",
+        "Ocupaciones insuficientemente especificadas",
+        "Trabajadores en la extracción y la edificación de construcciones",
+        "Conductores de transporte y de maquinaria móvil",
+        "Otros trabajadores artesanales no clasificados anteriormente",
+        "Auxiliares y técnicos en ciencias exactas, biológicas, ingeniería, informática y en telecomunicaciones",
+        "Profesionistas en ciencias económico-administrativas, ciencias sociales, humanistas y en artes",
+        "Trabajadores en servicios de protección y vigilancia",
+        "Profesores y especialistas en docencia",
+        "Trabajadores domésticos, de limpieza, planchadores y otros trabajadores de limpieza",
+        "Artesanos y trabajadores en la elaboración de productos de madera, papel, textiles y de cuero y piel",
+        "Artesanos y trabajadores en el tratamiento y elaboración de productos de metal",
+        "Trabajadores de apoyo en actividades agropecuarias, forestales, pesca y caza",
+        "Supervisores de personal de apoyo administrativo, secretarias, capturistas, cajeros y trabajadores de control de archivo y transporte",
+        "Trabajadores en la preparación y servicio de alimentos y bebidas, así como en servicios de esparcimiento y de hotelería",
+        "Investigadores y profesionistas en ciencias exactas, biológicas, ingeniería, informática y en telecomunicaciones",
+        "Médicos, enfermeras y otros especialistas en salud",
+        "Otros directores, funcionarios, gerentes, coordinadores y jefes de área, no clasificados anteriormente",
+        "Empleados de ventas en establecimientos",
+        "Trabajadores en cuidados personales y del hogar",
+        "Otros trabajadores auxiliares en actividades administrativas, no clasificados anteriormente",
+        "Trabajadores de apoyo en la minería, construcción e industria",
+        "Otros profesionistas y técnicos no clasificados anteriormente",
+        "Trabajadores en la elaboración y procesamiento de alimentos, bebidas y productos de tabaco",
+        "Enfermeras, técnicos en medicina y trabajadores de apoyo en salud",
+        "Trabajadores en actividades pesqueras, forestales, caza y similares",
+        "Otros operadores de maquinaria industrial, ensambladores y conductores de transporte, no clasificados anteriormente",
+        "Auxiliares y técnicos en ciencias económico-administrativas, ciencias sociales, humanistas y en artes",
+        "Operadores de instalaciones y maquinaria industrial",
+        "Otros comerciantes, empleados en ventas y agentes de ventas en establecimientos, no clasificados anteriormente",
+        "Supervisores y trabajadores que brindan y manejan información",
+        "Artesanos y trabajadores en la elaboración de productos de cerámica, vidrio, azulejo y similares",
+        "Trabajadores de paquetería, de apoyo para espectáculos, mensajeros y repartidores de mercancías",
+        "Vendedores ambulantes",
+        "Otros trabajadores en actividades elementales y de apoyo, no clasificados anteriormente",
+        "Ayudantes de conductores de transporte, conductores de transporte de tracción humana y animal y cargadores",
+        "Auxiliares y técnicos en educación, instructores y capacitadores",
+        "Trabajadores de la Armada, Ejército y Fuerza Aérea",
+        "Coordinadores y jefes de área en producción y tecnología",
+        "Funcionarios y altas autoridades de los sectores público, privado y social",
+        "Otros trabajadores en actividades agrícolas, ganaderas, forestales, caza y pesca, no clasificados anteriormente",
+        "Artesanos y trabajadores en la elaboración de productos de hule, caucho, plásticos y de sustancias químicas",
+        "Coordinadores y jefes de área en servicios financieros, administrativos y sociales",
+        "Directores y gerentes de ventas, restaurantes, hoteles y otros establecimientos",
+        "Ayudantes en la preparación de alimentos",
+        "Operadores de maquinaria agropecuaria y forestal",
+        "Trabajadores en servicios de alquiler",
+        "Directores y gerentes en servicios financieros, legales, administrativos y sociales",
+        "Directores y gerentes en producción, tecnología y transporte",
+        "Busca trabajo",
+        "Ensambladores y montadores de herramientas, maquinaria, productos metálicos y electrónicos",
+        "Coordinadores y jefes de área de ventas, restaurantes, hoteles y otros establecimientos"
+    ],
+    [
+        16957,
+        2144,
+        1295,
+        1293,
+        905,
+        723,
+        632,
+        503,
+        418,
+        284,
+        263,
+        260,
+        247,
+        193,
+        192,
+        166,
+        147,
+        133,
+        106,
+        101,
+        89,
+        88,
+        79,
+        77,
+        74,
+        72,
+        67,
+        63,
+        58,
+        55,
+        54,
+        49,
+        28,
+        27,
+        26,
+        24,
+        20,
+        20,
+        17,
+        13,
+        12,
+        9,
+        6,
+        6,
+        6,
+        6,
+        5,
+        5,
+        3,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+    ],
+    28030,
+    true
+);
+
+/* =========================================================
+   JI CUADRADA: V
+========================================================= */
+
+bar(
+    "chiV",
+    [
+        "Ocupación ampliada",
+        "Sexo",
+        "Estado civil",
+        "Escolaridad",
+        "Ocupación",
+        "Condición indígena",
+        "AfroMexicanos"
+    ],
+    [
+        .341,.294,.274,.271,.245,.080,.051
+    ],
+    1,
+    true
+);
+
+
+/* =========================================================
+   SEXO RESIDUOS
+========================================================= */
+
+residual(
+    "chiSexo",
+
+    [
+        {
+            label:"Agresión — Hombre",
+            causa:"Agresión",
+            obs:10791,
+            exp:6868.91,
+            res:79.977,
+            pct:"91.99",
+            padj:"< 0.001"
+        },
+        {
+            label:"Diabetes — Mujer",
+            causa:"Diabetes",
+            obs:17722,
+            exp:14853.87,
+            res:42.406,
+            pct:"49.44",
+            padj:"< 0.001"
+        },
+        {
+            label:"Neumonía — Mujer",
+            causa:"Neumonía",
+            obs:12670,
+            exp:11616.05,
+            res:16.110,
+            pct:"45.20",
+            padj:"< 0.001"
+        },
+        {
+            label:"Neumonía — Hombre",
+            causa:"Neumonía",
+            obs:15360,
+            exp:16413.95,
+            res:-16.110,
+            pct:"54.80",
+            padj:"< 0.001"
+        },
+        {
+            label:"Diabetes — Hombre",
+            causa:"Diabetes",
+            obs:18121,
+            exp:20989.13,
+            res:-42.406,
+            pct:"50.56",
+            padj:"< 0.001"
+        },
+        {
+            label:"Agresión — Mujer",
+            causa:"Agresión",
+            obs:939,
+            exp:4861.09,
+            res:-79.977,
+            pct:"8.01",
+            padj:"< 0.001"
+        }
+    ],
+
+    600
+);
+
+/* =========================================================
+   ESCOLARIDAD
+========================================================= */
+
+const escRaw=[
+
+["Agresión","Secundaria completa",3825,1764.86,57.884,32.61],
+["Agresión","Sin escolaridad",316,1731.35,-40.083,2.69],
+["Agresión","Primaria incompleta",887,2508.04,-39.717,7.56],
+["Neumonía","No aplica a menores de 3",815,304.39,37.097,2.91],
+["Agresión","Bachillerato incompleto",797,257.55,36.978,6.79],
+["Agresión","Secundaria incompleta",945,342.58,35.939,8.06],
+["Agresión","Bachillerato completo",1641,910.75,27.412,13.99],
+["Diabetes","No aplica a menores de 3",1,389.23,-27.284,.00],
+["Diabetes","Secundaria completa",4159,5392.83,-25.136,11.60],
+["Diabetes","Sin escolaridad",6456,5290.43,23.934,18.01],
+["Diabetes","Primaria incompleta",8957,7663.74,22.975,24.99],
+["Diabetes","Primaria completa",9583,8387.21,20.572,26.74],
+["Diabetes","Secundaria incompleta",599,1046.80,-19.370,1.67],
+["Diabetes","Bachillerato incompleto",401,787,-19.185,1.12],
+["Diabetes","Bachillerato completo",2128,2782.94,-17.826,5.94],
+["Neumonía","Secundaria completa",3391,4217.31,-17.403,12.10],
+["Neumonía","No especificado",1127,792.67,15.186,4.02],
+["Agresión","Primaria completa",2193,2744.80,-13.093,18.70],
+["Agresión","No aplica a menores de 3",5,127.38,-11.862,.04],
+["Neumonía","Primaria completa",5915,6558.98,-11.453,21.10],
+["Agresión","No especificado",175,331.72,-9.497,1.49],
+["Neumonía","Posgrado",240,152.38,8.973,.86],
+["Neumonía","Profesional",2537,2219.32,8.859,9.05],
+["Neumonía","Bachillerato incompleto",462,615.45,-7.885,1.65],
+["Diabetes","No especificado",836,1013.61,-7.804,2.33],
+["Diabetes","Profesional",2567,2837.93,-7.308,7.16],
+["Diabetes","Posgrado",124,194.85,-7.018,.35],
+["Neumonía","Secundaria incompleta",664,818.62,-6.914,2.37],
+["Neumonía","Primaria incompleta",6321,5993.21,6.020,22.55],
+["Neumonía","Sin escolaridad",4387,4137.23,5.302,15.65],
+["Neumonía","Preescolar",70,44.12,4.916,.25],
+["Diabetes","Preescolar",32,56.42,-4.486,.09]
+
+];
+
+residual(
+    "chiEsc",
+    escRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    1100
+);
+
+
+/* =========================================================
+   OCUPACION
+========================================================= */
+
+const ocupRaw=[
+
+["Agresión","No especificado / fuera de clasificación",3807,7561.52,-78.799,32.46],
+["Agresión","Trabajo elemental y apoyo",1039,304.87,46.349,8.86],
+["Agresión","Construcción y manufactura",1875,840.15,40.313,15.98],
+["Agresión","Operadores y transporte",1008,387.57,34.868,8.59],
+["Agresión","Comercio y ventas",1536,789.73,29.916,13.09],
+["Diabetes","No especificado / fuera de clasificación",25050,23105.49,29.591,69.89],
+["Neumonía","No especificado / fuera de clasificación",19879,18068.99,28.475,70.92],
+["Diabetes","Trabajo elemental y apoyo",441,931.60,-22.458,1.23],
+["Agresión","Servicios",504,209.15,22.382,4.30],
+["Agresión","Técnicos y auxiliares",470,228.54,17.549,4.01],
+["Diabetes","Construcción y manufactura",2039,2567.22,-14.920,5.69],
+["Neumonía","Construcción y manufactura",1501,2007.62,-14.794,5.35],
+["Neumonía","Comercio y ventas",1403,1887.13,-14.547,5.01],
+["Neumonía","Operadores y transporte",586,926.14,-14.329,2.09],
+["Diabetes","Servicios",401,639.08,-13.104,1.12],
+["Neumonía","Trabajo elemental y apoyo",485,728.53,-11.525,1.73],
+["Diabetes","Operadores y transporte",904,1184.29,-11.421,2.52],
+["Agresión","Dirección y gerencia",115,48.87,10.312,.98],
+["Agresión","Fuerzas armadas",33,7.60,10.025,.28],
+["Diabetes","Administrativos",153,256.01,-8.910,.43],
+["Diabetes","Técnicos y auxiliares",533,698.34,-8.713,1.49],
+["Agresión","Administrativos",154,83.78,8.376,1.31],
+["Diabetes","Comercio y ventas",2151,2413.14,-7.620,6.00],
+["Diabetes","Dirección y gerencia",86,149.34,-7.162,.24],
+["Diabetes","Agropecuario y pesca",3363,3097.74,6.876,9.38],
+["Neumonía","Agropecuario y pesca",2207,2422.50,-5.775,7.87],
+["Neumonía","Profesionistas",700,608.03,4.754,2.50],
+["Diabetes","Fuerzas armadas",7,23.23,-4.645,.02],
+["Neumonía","Técnicos y auxiliares",470,546.12,-4.147,1.68],
+["Neumonía","Servicios",443,499.77,-3.230,1.58],
+["Diabetes","Profesionistas",715,777.52,-3.126,1.99],
+["Neumonía","Administrativos",233,200.21,2.932,.83],
+["Neumonía","Fuerzas armadas",9,18.17,-2.712,.03]
+
+];
+
+residual(
+    "chiOcup",
+    ocupRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    1100
+);
+
+
+/* =========================================================
+   OCUPACION AMPLIADA
+========================================================= */
+
+const oaRaw=[
+
+["Agresión","No trabaja",1689,6459.47,-96.337,14.40],
+["Agresión","Ocupaciones insuficientemente especificadas",1876,544.74,63.548,15.99],
+["Diabetes","No trabaja",22987,19737.99,47.574,64.13],
+["Agresión","Extracción y edificación",1097,392.38,39.364,9.35],
+["Neumonía","No aplica a menores de 5 años",905,338.13,39.100,3.23],
+["Agresión","Conductores de transporte",932,349.40,34.426,7.95],
+["Diabetes","No aplica a menores de 5 años",1,432.37,-28.781,.00],
+["Agresión","Apoyo agropecuario, forestal, pesca y caza",412,122.42,28.625,3.51],
+["Agresión","Apoyo en minería, construcción e industria",256,57.41,28.586,2.18],
+["Agresión","Comerciantes en establecimientos",1422,744.89,27.892,12.12],
+["Diabetes","Ocupaciones insuficientemente especificadas",912,1664.55,-26.047,2.54],
+["Neumonía","No trabaja",16957,15435.54,23.031,60.50],
+["Neumonía","Ocupaciones insuficientemente especificadas",723,1301.71,-20.707,2.58],
+["Agresión","Auxiliares y técnicos en ciencias exactas",375,154.22,19.470,3.20],
+["Agresión","Protección y vigilancia",310,126.29,17.881,2.64],
+["Diabetes","Extracción y edificación",800,1198.99,-16.162,2.23],
+["Agresión","Paquetería y reparto",70,15.36,15.178,.60],
+["Neumonía","Comerciantes en establecimientos",1295,1779.98,-14.975,4.62],
+["Neumonía","Conductores de transporte",503,834.93,-14.702,1.79],
+["Diabetes","Apoyo en minería, construcción e industria",42,175.42,-13.925,.12],
+["Agresión","Trabajadores domésticos y de limpieza",191,78.51,13.859,1.63],
+["Neumonía","Extracción y edificación",632,937.63,-12.799,2.25],
+["Agresión","No aplica a menores de 5 años",6,141.50,-12.468,.05],
+["Agresión","Artesanos del metal",198,90.14,12.407,1.69],
+["Agresión","Otros trabajadores artesanales",389,222.18,12.293,3.32],
+["Neumonía","No especificada",1293,992.88,12.226,4.61],
+["Agresión","Cuidados personales y del hogar",108,39.41,11.907,.92],
+["Agresión","Ayudantes de conductores",45,10.86,11.276,.38],
+["Agresión","Otros trabajadores elementales",40,9.00,11.248,.34],
+["Agresión","Otros auxiliares administrativos",95,34.91,11.081,.81],
+["Agresión","Empleados de ventas",94,35.22,10.792,.80],
+["Neumonía","Apoyo agropecuario",147,292.52,-10.783,.52],
+["Diabetes","Conductores de transporte",817,1067.66,-10.740,2.28],
+["Diabetes","Trabajadores domésticos y de limpieza",122,239.89,-10.531,.34],
+["Diabetes","Apoyo agropecuario",230,374.06,-10.325,.64],
+["Agresión","Armada, Ejército y Fuerza Aérea",33,7.60,10.025,.28],
+["Diabetes","Protección y vigilancia",244,385.91,-10.016,.68],
+["Agresión","No especificada",236,415.50,-9.755,2.01],
+["Diabetes","Auxiliares y técnicos en ciencias exactas",335,471.25,-8.712,.93],
+["Agresión","Otros directores y gerentes",83,36.93,8.262,.71],
+["Diabetes","Paquetería y mensajería",9,46.94,-7.641,.03],
+["Diabetes","Trabajadores agrícolas y ganaderos",3290,3014.30,7.236,9.18],
+["Diabetes","Empleados de ventas",54,107.62,-7.138,.15],
+["Agresión","Hule, caucho, plásticos y químicos",21,5.59,7.098,.18],
+["Agresión","Preparación de alimentos y hotelería",86,43.44,7.038,.73],
+["Neumonía","Apoyo en minería, construcción e industria",72,137.18,-7.033,.26],
+["Diabetes","Otros trabajadores elementales",1,27.50,-6.971,.00],
+["Diabetes","Otros auxiliares administrativos",56,106.67,-6.775,.16],
+["Diabetes","Cuidados personales y del hogar",69,120.42,-6.472,.19],
+["Neumonía","Otros trabajadores artesanales",418,530.92,-6.237,1.49],
+["Diabetes","Otros directores y gerentes",67,112.83,-5.959,.19],
+["Neumonía","Trabajadores agrícolas y ganaderos",2144,2357.24,-5.785,7.65],
+["Diabetes","Comerciantes en establecimientos",2084,2276.13,-5.738,5.81],
+["Neumonía","Auxiliares y técnicos en ciencias exactas",284,368.53,-5.588,1.01],
+["Agresión","Elaboración de alimentos y bebidas",66,35.69,5.529,.56],
+["Diabetes","Preparación de alimentos y hotelería",88,132.75,-5.365,.25],
+["Diabetes","Ayudantes de conductores",12,33.19,-5.074,.03],
+["Agresión","Funcionarios y altas autoridades",12,3.41,5.057,.10],
+["Agresión","Otros operadores y ensambladores",47,24.51,4.946,.40],
+["Diabetes","Supervisores administrativos",88,128.48,-4.933,.25],
+["Diabetes","Artesanos del metal",217,275.45,-4.875,.61],
+["Diabetes","No especificada",1149,1269.63,-4.753,3.21],
+["Diabetes","Armada, Ejército y Fuerza Aérea",7,23.23,-4.645,.02],
+["Agresión","Ayudantes en preparación de alimentos",9,2.48,4.501,.08],
+["Neumonía","Artesanos del metal",166,215.41,-4.260,.59],
+["Agresión","Operadores de instalaciones",27,13.19,4.140,.23],
+["Neumonía","Supervisores administrativos",133,100.47,4.098,.47],
+["Diabetes","Otros comerciantes y agentes de ventas",11,26.08,-4.072,.03],
+["Agresión","Profesores y especialistas en docencia",56,90.61,-3.971,.48],
+["Diabetes","Profesionistas económico-administrativos",250,297.73,-3.830,.70],
+["Agresión","Cerámica, vidrio y azulejo",20,9.31,3.814,.17],
+["Diabetes","Supervisores y trabajadores de información",9,20.86,-3.582,.03],
+["Agresión","Directores y gerentes financieros",6,1.71,3.576,.05],
+["Agresión","Coordinadores en servicios financieros",7,2.17,3.564,.06],
+["Neumonía","Paquetería, mensajería y reparto",20,36.70,-3.478,.07]
+
+];
+
+residual(
+    "chiOcupAmp",
+    oaRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    2300
+);
+
+
+/* =========================================================
+   ESTADO CIVIL
+========================================================= */
+
+const estadoRaw=[
+
+["Agresión","Soltero(a)",5702,2973.19,63.016,48.61],
+["Agresión","Viudo(a)",102,2623.01,-60.778,.87],
+["Agresión","Union Libre",2798,1122.68,57.204,23.85],
+["Neumonía","No aplica a menores de 12",1018,389.29,40.452,3.63],
+["Agresión","Casado(a)",2171,3864.85,-36.201,18.51],
+["Diabetes","No aplica a menores de 12",1,497.80,-30.920,.00],
+["Diabetes","Soltero(a)",7501,9085.08,-26.524,20.93],
+["Diabetes","Viudo(a)",9501,8015.05,25.975,26.51],
+["Diabetes","Casado(a)",13331,11809.71,23.574,37.19],
+["Diabetes","Union Libre",2552,3430.55,-21.751,7.12],
+["Neumonía","Union Libre",1886,2682.76,-20.393,6.73],
+["Neumonía","Soltero(a)",5960,7104.73,-19.815,21.26],
+["Neumonía","Viudo(a)",7303,6267.94,18.705,26.05],
+["Agresión","No aplica a menores de 12",31,162.91,-11.323,.26],
+["Neumonía","Divorciado(a)",694,608.78,4.402,2.48],
+["Agresión","Divorciado(a)",208,254.76,-3.222,1.77],
+["Neumonía","Casado(a)",9408,9235.44,2.764,33.56]
+
+];
+
+residual(
+    "chiEstado",
+    estadoRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    600
+);
+
+
+/* =========================================================
+   CONDICION INDIGENA
+========================================================= */
+
+const indRaw=[
+
+["Agresión","No especificado",1172,608.04,25.553,9.99],
+["Agresión","Si",289,645.75,-15.712,2.46],
+["Diabetes","No especificado",1464,1857.98,-12.944,4.08],
+["Neumonía","No aplica",1373,1687.67,-9.960,4.90],
+["Diabetes","No aplica",2454,2158.08,9.061,6.85],
+["Neumonía","Si",1734,1543.07,6.303,6.19],
+["Agresión","No",9544,9769.96,-6.084,81.36],
+["Neumonía","No",23640,23346.28,5.928,84.34],
+["Neumonía","No especificado",1283,1452.98,-5.773,4.58],
+["Diabetes","Si",2139,1973.18,5.295,5.97]
+
+];
+
+residual(
+    "chiInd",
+    indRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    600
+);
+
+
+/* =========================================================
+   AFROMEXICANOS
+========================================================= */
+
+const afroRaw=[
+
+["Agresión","No especificado",902,553.27,16.524,7.69],
+["Neumonía","No",25307,24835.97,11.162,90.29],
+["Agresión","No",10046,10393.36,-10.981,85.64],
+["Diabetes","No especificado",1508,1690.62,-6.274,4.21],
+["Neumonía","No especificado",1156,1322.10,-5.900,4.12],
+["Diabetes","No",31635,31758.67,-2.835,88.26],
+["Agresión","Si",57,77.11,-2.500,.49]
+
+];
+
+residual(
+    "chiAfro",
+    afroRaw.map(x=>({
+        label:x[0]+" — "+x[1],
+        causa:x[0],
+        obs:x[2],
+        exp:x[3],
+        res:x[4],
+        pct:x[5],
+        padj:"< 0.05"
+    })),
+    600
+);
+
+
+/* =========================================================
+   FIN
+========================================================= */
+
+</script>
+
+</body>
+</html>
